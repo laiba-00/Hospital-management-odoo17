@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Header — Book Appointment Button          -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="hospital_header_link"
+              inherit_id="website.layout"
+              name="Hospital Header Link">
+        <xpath expr="//header"
+               position="inside">
+            <div style="position:absolute;
+                        top:15px;
+                        right:980px;
+                        z-index:999;">
+                <a href="/hospital/book"
+                   class="btn btn-primary">
+                    Book Appointment
+                </a>
+                <t t-if="request.env.user and request.env.user.id != request.env.ref('base.public_user').id">
+                    <a href="/my/appointments"
+                       class="btn btn-outline-primary">
+                        My Appointments
+                    </a>
+                </t>
+
+                <!-- Login — Sirf guest ko dikhega -->
+                <t t-if="not request.env.user or request.env.user.id == request.env.ref('base.public_user').id">
+                    <a href="/hospital/login"
+                       class="btn btn-outline-primary">
+                        Login
+                    </a>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Portal Home — Appointments Count          -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="portal_my_home_appointment"
+              inherit_id="portal.portal_my_home"
+              name="Portal: Appointments">
+        <xpath expr="//div[@id='portal_client_category']"
+               position="after">
+            <t t-if="appointment_count"
+               t-call="portal.portal_docs_entry">
+                <t t-set="document_name"
+                   t-value="'Appointments'"/>
+                <t t-set="url"
+                   t-value="'/my/appointments'"/>
+                <t t-set="count"
+                   t-value="appointment_count"/>
+                <t t-set="name"
+                   t-value="'Appointments'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Register Page                             -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="hospital_register_page"
+              name="Hospital Register">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white text-center">
+                                <h4>Create Account</h4>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <t t-if="error">
+                                    <div class="alert alert-danger">
+                                        <t t-esc="error"/>
+                                    </div>
+                                </t>
+
+                                <form action="/hospital/register/submit"
+                                      method="POST">
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Full Name
+                                        </label>
+                                        <input type="text"
+                                               name="name"
+                                               class="form-control"
+                                               placeholder="Ali Khan"
+                                               required="required"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Email
+                                        </label>
+                                        <input type="email"
+                                               name="email"
+                                               class="form-control"
+                                               placeholder="ali@email.com"
+                                               required="required"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Password
+                                        </label>
+                                        <input type="password"
+                                               name="password"
+                                               class="form-control"
+                                               placeholder="••••••••"
+                                               required="required"/>
+                                    </div>
+
+                                    <button type="submit"
+                                            class="btn btn-primary w-100">
+                                        Create Account
+                                    </button>
+
+                                    <div class="text-center mt-3">
+                                        <a href="/hospital/login">
+                                            Already have account? Login
+                                        </a>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Login Page                                -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="hospital_login_page"
+              name="Hospital Login">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-5">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white text-center">
+                                <h4>Login</h4>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <t t-if="error">
+                                    <div class="alert alert-danger">
+                                        <t t-esc="error"/>
+                                    </div>
+                                </t>
+
+                                <form action="/hospital/login/submit"
+                                      method="POST">
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Email
+                                        </label>
+                                        <input type="email"
+                                               name="email"
+                                               class="form-control"
+                                               placeholder="ali@email.com"
+                                               required="required"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Password
+                                        </label>
+                                        <input type="password"
+                                               name="password"
+                                               class="form-control"
+                                               placeholder="••••••••"
+                                               required="required"/>
+                                    </div>
+
+                                    <button type="submit"
+                                            class="btn btn-primary w-100">
+                                        Login
+                                    </button>
+
+                                    <div class="text-center mt-3">
+                                        <a href="/hospital/register">
+                                            New user? Create Account
+                                        </a>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Book Appointment Form                     -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="hospital_book_appointment"
+              name="Book Appointment">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card shadow">
+                            <div class="card-header bg-primary text-white">
+                                <h4>Book Appointment</h4>
+                            </div>
+                            <div class="card-body p-4">
+
+                                <form action="/hospital/book/submit"
+                                      method="POST"
+                                      id="booking_form">
+
+                                    <!-- CSRF Token -->
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <!-- Hidden Fields -->
+                                    <input type="hidden"
+                                           name="slot_start"
+                                           id="slot_start"/>
+                                    <input type="hidden"
+                                           name="slot_end"
+                                           id="slot_end"/>
+                                    <input type="hidden"
+                                           name="fee"
+                                           id="fee_hidden"/>
+                                    <input type="hidden"
+                                           name="duration"
+                                           id="duration_hidden"/>
+
+                                    <!-- Patient Info -->
+                                    <h5 class="text-primary">
+                                        Your Information
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">
+                                                Full Name
+                                            </label>
+                                            <input type="text"
+                                                   name="patient_name"
+                                                   class="form-control"
+                                                   placeholder="Ali Khan"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">
+                                                Email
+                                            </label>
+                                            <input type="email"
+                                                   name="patient_email"
+                                                   class="form-control"
+                                                   placeholder="ali@email.com"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">
+                                                Phone
+                                            </label>
+                                            <input type="text"
+                                                   name="patient_phone"
+                                                   class="form-control"
+                                                   placeholder="03001234567"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">
+                                                Gender
+                                            </label>
+                                            <select name="patient_gender"
+                                                    class="form-select"
+                                                    required="required">
+                                                <option value="">
+                                                    -- Select Gender --
+                                                </option>
+                                                <option value="male">
+                                                    Male
+                                                </option>
+                                                <option value="female">
+                                                    Female
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">
+                                                Date of Birth
+                                            </label>
+                                            <input type="date"
+                                                   name="patient_dob"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <hr/>
+
+                                    <!-- Step 1 Doctor -->
+                                    <h5 class="text-primary">
+                                        Step 1 — Select Doctor
+                                    </h5>
+                                    <div class="mb-3">
+                                        <select name="doctor_id"
+                                                id="doctor_select"
+                                                class="form-select"
+                                                required="required"
+                                                onchange="updateFees()">
+                                            <option value="">
+                                                -- Select Doctor --
+                                            </option>
+                                            <t t-foreach="doctors"
+                                               t-as="doctor">
+                                                <option
+                                                        t-att-value="doctor.id"
+                                                        t-att-data-fee10="doctor.fee_10min"
+                                                        t-att-data-fee20="doctor.fee_20min"
+                                                        t-att-data-fee40="doctor.fee_40min">
+                                                    <t t-esc="doctor.name"/>
+                                                    —
+                                                    <t t-esc="doctor.department"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <!-- Step 2 Date -->
+                                    <h5 class="text-primary">
+                                        Step 2 — Select Date
+                                    </h5>
+                                    <div class="mb-3">
+                                        <input type="date"
+                                               name="date_appointment"
+                                               id="date_input"
+                                               class="form-control"
+                                               required="required"
+                                               onchange="loadSlots()"/>
+                                    </div>
+
+                                    <!-- Step 3 Duration -->
+                                    <h5 class="text-primary">
+                                        Step 3 — Select Duration
+                                    </h5>
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <div class="card"
+                                                     id="card_10"
+                                                     onclick="selectDuration(10)"
+                                                     style="cursor:pointer; border:2px solid #dee2e6;">
+                                                    <div class="card-body text-center p-3">
+                                                        <h5>10 Min</h5>
+                                                        <p class="text-muted mb-1">
+                                                            Quick Check-up
+                                                        </p>
+                                                        <h6 class="text-success"
+                                                            id="fee_10">
+                                                            Rs. 0
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="card"
+                                                     id="card_20"
+                                                     onclick="selectDuration(20)"
+                                                     style="cursor:pointer; border:2px solid #dee2e6;">
+                                                    <div class="card-body text-center p-3">
+                                                        <h5>20 Min</h5>
+                                                        <p class="text-muted mb-1">
+                                                            Standard
+                                                        </p>
+                                                        <h6 class="text-success"
+                                                            id="fee_20">
+                                                            Rs. 0
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="card"
+                                                     id="card_40"
+                                                     onclick="selectDuration(40)"
+                                                     style="cursor:pointer; border:2px solid #dee2e6;">
+                                                    <div class="card-body text-center p-3">
+                                                        <h5>40 Min</h5>
+                                                        <p class="text-muted mb-1">
+                                                            Detailed
+                                                        </p>
+                                                        <h6 class="text-success"
+                                                            id="fee_40">
+                                                            Rs. 0
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 4 Slots -->
+                                    <div id="slots_section"
+                                         style="display:none;">
+                                        <h5 class="text-primary">
+                                            Step 4 — Select Time Slot
+                                        </h5>
+                                        <div id="slots_container"
+                                             class="row mb-3">
+                                        </div>
+                                    </div>
+
+                                    <!-- Fee Display -->
+                                    <div id="fee_display"
+                                         style="display:none;"
+                                         class="alert alert-success text-center mb-3">
+                                        <h5>Consultation Fee:
+                                            <strong id="fee_show">
+                                                Rs. 0
+                                            </strong>
+                                        </h5>
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <button type="submit"
+                                            id="submit_btn"
+                                            class="btn btn-primary w-100"
+                                            style="display:none;">
+                                        Confirm Appointment
+                                    </button>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript -->
+            <script type="text/javascript"
+                    src="/om_hospital/static/src/js/hospital_booking.js">
+            </script>
+
+        </t>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- My Appointments List                      -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="portal_appointments_list"
+              name="My Appointments">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="d-flex justify-content-between mb-4">
+                    <h3 class="text-primary">
+                        My Appointments
+                    </h3>
+                    <a href="/hospital/book"
+                       class="btn btn-success">
+                        + Book New
+                    </a>
+                </div>
+
+                <t t-if="not appointments">
+                    <div class="alert alert-info">
+                        <p>No appointments yet.</p>
+                        <a href="/hospital/book"
+                           class="btn btn-primary mt-2">
+                            Book Appointment
+                        </a>
+                    </div>
+                </t>
+
+                <t t-if="appointments">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-hover">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Fee</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="appointments"
+                                       t-as="apt">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="apt.reference"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="apt.doctor_id.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="apt.date_appointment"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="apt.slot_time"/>
+                                            </td>
+                                            <td>
+                                                Rs.
+                                                <t t-esc="apt.consultation_fee"/>
+                                            </td>
+                                            <td>
+                                                <span t-attf-class="badge #{apt.state == 'confirmed' and 'bg-success' or apt.state == 'draft' and 'bg-warning' or apt.state == 'cancelled' and 'bg-danger' or 'bg-info'}">
+                                                    <t t-esc="apt.state"/>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a t-attf-href="/my/appointments/#{apt.id}"
+                                                   class="btn btn-sm btn-primary">
+                                                    View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Appointment Detail                        -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="portal_appointment_detail"
+              name="Appointment Detail">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4>
+                            Appointment —
+                            <t t-esc="appointment.reference"/>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-primary">
+                                    Patient Information
+                                </h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td>
+                                            <strong>Name</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="appointment.patient_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>DOB</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="appointment.date_of_birth"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-primary">
+                                    Doctor Information
+                                </h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td>
+                                            <strong>Doctor</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="appointment.doctor_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Department</strong>
+                                        </td>
+                                        <td>
+                                            <t t-esc="appointment.department"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>
+                                    <strong>Date</strong>
+                                </td>
+                                <td>
+                                    <t t-esc="appointment.date_appointment"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Time Slot</strong>
+                                </td>
+                                <td>
+                                    <t t-esc="appointment.slot_time"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Duration</strong>
+                                </td>
+                                <td>
+                                    <t t-esc="appointment.appointment_duration"/>
+                                    mins
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Status</strong>
+                                </td>
+                                <td>
+                                    <t t-esc="appointment.state"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="text-center p-4"
+                             style="background:#d4edda; border-radius:8px;">
+                            <h5 style="color:#155724;">
+                                Consultation Fee
+                            </h5>
+                            <h3 style="color:#155724;">
+                                Rs.
+                                <t t-esc="appointment.consultation_fee"/>
+                            </h3>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="/my/appointments"
+                               class="btn btn-secondary">
+                                Back
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- Doctors List                              -->
+    <!-- ══════════════════════════════════════════ -->
+    <template id="hospital_doctors_list"
+              name="Doctors List">
+        <t t-call="website.layout">
+            <div class="container mt-4">
+                <h2 class="text-center text-primary mb-4">
+                    Our Doctors
+                </h2>
+                <div class="row">
+                    <t t-foreach="doctors" t-as="doctor">
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="text-primary">
+                                        <t t-esc="doctor.name"/>
+                                    </h5>
+                                    <p class="text-muted">
+                                        <t t-esc="doctor.department"/>
+                                    </p>
+                                    <hr/>
+                                    <div>
+                                        10 min — Rs.
+                                        <t t-esc="doctor.fee_10min"/>
+                                    </div>
+                                    <div>
+                                        20 min — Rs.
+                                        <t t-esc="doctor.fee_20min"/>
+                                    </div>
+                                    <div>
+                                        40 min — Rs.
+                                        <t t-esc="doctor.fee_40min"/>
+                                    </div>
+                                    <a href="/hospital/book"
+                                       class="btn btn-primary mt-3">
+                                        Book Appointment
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

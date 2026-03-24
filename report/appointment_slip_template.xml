@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_appointment_slip_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <div class="text-center mb-4">
+                            <h2 style="color:#2c7be5;">Hospital Management System</h2>
+                            <h4>Appointment Slip</h4>
+                            <h5 style="color:gray;">
+                                Ref: <t t-esc="doc.reference"/>
+                            </h5>
+                        </div>
+
+                        <hr/>
+
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <h5 style="color:#2c7be5;">Patient Information</h5>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td><strong>Name</strong></td>
+                                        <td><t t-esc="doc.patient_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Date of Birth</strong></td>
+                                        <td><t t-esc="doc.date_of_birth"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="col-6">
+                                <h5 style="color:#2c7be5;">Doctor Information</h5>
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td><strong>Doctor</strong></td>
+                                        <td><t t-esc="doc.doctor_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Department</strong></td>
+                                        <td><t t-esc="doc.department"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 style="color:#2c7be5;">Appointment Details</h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td><strong>Date</strong></td>
+                                        <td><t t-esc="doc.date_appointment"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Time Slot</strong></td>
+                                        <td><t t-esc="doc.slot_time"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Duration</strong></td>
+                                        <td>
+                                            <t t-esc="doc.appointment_duration"/> mins
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status</strong></td>
+                                        <td><t t-esc="doc.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Note</strong></td>
+                                        <td>
+                                            <t t-if="doc.note">
+                                                <t t-esc="doc.note"/>
+                                            </t>
+                                            <t t-else="">—</t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;padding:20px;">
+                                    <div style="font-size:13px;color:#155724;">
+                                        ✓ Consultation Fee
+                                    </div>
+                                    <div style="font-size:28px;font-weight:bold;color:#155724;">
+                                        Rs. <t t-esc="doc.consultation_fee"/>
+                                    </div>
+                                    <div style="font-size:12px;color:#6c757d;">
+                                        <t t-esc="doc.appointment_duration"/> minute consultation
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <p style="color:gray;font-size:12px;">
+                                    Please arrive 10 minutes before your appointment time.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

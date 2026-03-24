@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_appointment_slot_wizard_form" model="ir.ui.view">
+        <field name="name">appointment.slot.wizard.form</field>
+        <field name="model">appointment.slot.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Appointment Duration">
+                <sheet>
+
+                    <!-- Doctor + Date Info (read-only) -->
+                    <group>
+                        <group>
+                            <field name="appointment_id" invisible="1"/>
+                            <field name="doctor_id" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Duration Selection -->
+                    <separator string="⏱ How long do you need?"/>
+                    <group>
+                        <field name="duration" widget="radio" required="1"/>
+                    </group>
+
+                    <!-- Fee Table -->
+                    <separator string="💰 Doctor's Consultation Fees"/>
+                    <div style="margin: 8px 16px 16px;">
+                        <table class="table table-bordered table-sm"
+                               style="max-width: 440px; background: #ffffff;">
+                            <thead style="background-color: #f1f3f4;">
+                                <tr>
+                                    <th style="padding: 8px 12px;">Duration</th>
+                                    <th style="padding: 8px 12px;">Fee (Rs.)</th>
+                                    <th style="padding: 8px 12px;">Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 8px 12px;">10 Minutes</td>
+                                    <td style="padding: 8px 12px; font-weight: bold;">
+                                        <field name="fee_10" readonly="1" nolabel="1"/>
+                                    </td>
+                                    <td style="padding: 8px 12px; color: #6c757d;">
+                                        Quick Check-up
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 12px;">20 Minutes</td>
+                                    <td style="padding: 8px 12px; font-weight: bold;">
+                                        <field name="fee_20" readonly="1" nolabel="1"/>
+                                    </td>
+                                    <td style="padding: 8px 12px; color: #6c757d;">
+                                        Standard Consultation
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 12px;">40 Minutes</td>
+                                    <td style="padding: 8px 12px; font-weight: bold;">
+                                        <field name="fee_40" readonly="1" nolabel="1"/>
+                                    </td>
+                                    <td style="padding: 8px 12px; color: #6c757d;">
+                                        Detailed Examination
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Selected Fee Highlight -->
+                    <div class="alert alert-success"
+                         role="alert"
+                         invisible="not duration"
+                         style="margin: 0 16px 16px; padding: 14px 18px;">
+                        <div style="font-size: 13px; margin-bottom: 4px;">
+                            ✓ Your Selected Fee:
+                        </div>
+                        <div style="font-size: 22px; font-weight: bold; color: #155724;">
+                            Rs.
+                            <field name="selected_fee"
+                                   readonly="1"
+                                   nolabel="1"
+                                   style="display:inline; font-size:22px;
+                                                  font-weight:bold; color:#155724;"/>
+                        </div>
+                    </div>
+
+                </sheet>
+                <footer>
+                    <button name="action_show_slots"
+                            string="Show Available Slots →"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- WIZARD ACTION                             -->
+    <!-- ========================================= -->
+    <record id="action_appointment_slot_wizard" model="ir.actions.act_window">
+        <field name="name">Choose Appointment Duration</field>
+        <field name="res_model">appointment.slot.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+</odoo>

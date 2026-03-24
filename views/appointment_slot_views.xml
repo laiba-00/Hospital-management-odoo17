@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_slot_tree" model="ir.ui.view">
+        <field name="name">appointment.slot.tree</field>
+        <field name="model">hospital.appointment.slot</field>
+        <field name="arch" type="xml">
+            <tree string="Appointment Slots"
+                  decoration-success="not is_booked"
+                  decoration-danger="is_booked"
+                  create="false"
+                  edit="false"
+                  delete="false">
+                <field name="doctor_id"/>
+                <field name="date"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="is_booked"/>
+                <field name="appointment_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_appointment_slot_kanban" model="ir.ui.view">
+        <field name="name">appointment.slot.kanban</field>
+        <field name="model">hospital.appointment.slot</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" create="false" edit="false" delete="false">
+                <field name="id"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="is_booked"/>
+                <field name="doctor_id"/>
+                <field name="time_display"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click"
+                             style="padding: 15px; margin: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div class="row">
+                                <div class="col-12">
+                                    <strong style="font-size: 18px;">
+                                        <field name="time_display"/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <button type="object"
+                                            name="action_select_slot"
+                                            class="btn btn-primary btn-block"
+                                            invisible="is_booked">
+                                        Select This Slot
+                                    </button>
+                                    <span class="badge badge-danger" invisible="not is_booked">
+                                        Already Booked
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="action_appointment_slots_kanban" model="ir.actions.act_window">
+        <field name="name">Available Slots</field>
+        <field name="res_model">hospital.appointment.slot</field>
+        <field name="view_mode">kanban,tree</field>
+        <field name="domain">[('is_booked','=',False)]</field>
+    </record>
+
+</odoo>

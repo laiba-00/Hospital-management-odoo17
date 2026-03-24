@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_appointment_slip_report" model="ir.actions.report">
+        <field name="name">Appointment Slip</field>
+        <field name="model">hospital.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+
+        <!-- IMPORTANT: module name -->
+        <field name="report_name">om_hospital.report_appointment_slip_template</field>
+        <field name="report_file">om_hospital.report_appointment_slip_template</field>
+
+        <field name="print_report_name">'Appointment Slip - %s' % (object.reference)</field>
+    </record>
+
+</odoo>
+

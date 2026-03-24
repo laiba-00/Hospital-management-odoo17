@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="email_template_appointment_confirm"
+            model="mail.template">
+
+        <!-- Template ka naam -->
+        <field name="name">
+            Appointment Confirmation Email
+        </field>
+
+        <!-- Kis model ka template hai -->
+        <field name="model_id"
+               ref="model_hospital_appointment"/>
+
+        <!-- Email subject -->
+        <field name="subject">
+            Appointment Confirmed — {{object.reference}}
+        </field>
+
+        <!-- Kisko email jaye -->
+        <field name="email_to">
+            {{object.patient_id.email}}
+        </field>
+
+        <!-- Email ka body -->
+        <field name="body_html" type="html">
+            <div style="font-family: Arial; padding: 20px;">
+
+                <h2 style="color: #2c7be5;">
+                    Appointment Confirmed!
+                </h2>
+
+                <p>Dear <t t-esc="object.patient_id.name"/>,</p>
+
+                <p>Your appointment has been confirmed.
+                   Details are below:</p>
+
+                <table style="width: 100%;
+                              border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Reference</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.reference"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Doctor</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.doctor_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Department</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.department"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Date</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.date_appointment"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Time Slot</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.slot_time"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Duration</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <t t-esc="object.appointment_duration"/> mins
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            <strong>Consultation Fee</strong>
+                        </td>
+                        <td style="padding: 8px;
+                                   border: 1px solid #ddd;">
+                            Rs. <t t-esc="object.consultation_fee"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="margin-top: 20px;">
+                    Please arrive 10 minutes before your
+                    appointment time.
+                </p>
+
+                <p style="color: gray; font-size: 12px;">
+                    This is an automated email from
+                    Hospital Management System.
+                </p>
+
+            </div>
+        </field>
+
+    </record>
+</odoo>

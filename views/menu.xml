@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_hospital"
+              name="CityMed Hospital"
+              web_icon="om_hospital,static/description/icon.png"
+    />
+    <menuitem id="menu_frontdesk"
+              name="Front Desk"
+              parent="menu_hospital"/>
+    <menuitem id="menu_patient"
+              name="Patient"
+              parent="menu_frontdesk"
+              action="action_hospital_patient"/>
+    <menuitem id="menu_patient_readonly"
+              name="View Patient"
+              parent="menu_frontdesk"
+              action="action_hospital_readonly_patient"/>
+    <menuitem id="menu_patient_appointment"
+              name="Patient Appointment"
+              parent="menu_frontdesk"
+              action="action_patient_appointment"/>
+    <menuitem id="menu_configuration"
+              name="Configuration"
+              parent="menu_hospital"/>
+    <menuitem id="menu_patient_tag"
+              name="Tags"
+              parent="menu_configuration"
+              action="action_patient_tag"/>
+    <menuitem id="menu_hospital_doctor"
+              name="Doctors"
+              parent="menu_configuration"
+              action="action_hospital_doctor"/>
+    <menuitem id="menu_doctor_schedule"
+              name="Doctor Schedules"
+              parent="menu_configuration"
+              action="action_doctor_schedule"/>
+</odoo>

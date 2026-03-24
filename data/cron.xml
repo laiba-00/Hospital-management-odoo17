@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="ir_cron_auto_cancel_appointments"
+            model="ir.cron">
+
+        <!-- Cron Job ka naam -->
+        <field name="name">
+            Hospital: Auto Cancel Past Appointments
+        </field>
+
+        <!-- Kis model ka method call karna hai -->
+        <field name="model_id"
+               ref="model_hospital_appointment"/>
+
+        <!-- Kaunsa method call karna hai -->
+        <field name="code">
+            model.action_auto_cancel_appointments()
+        </field>
+
+        <!-- Active hai ya nahi -->
+        <field name="active">True</field>
+
+        <!-- Kab se shuru kare -->
+        <field name="nextcall">2024-01-01 00:00:00</field>
+
+        <!-- Kitni baar run kare -->
+        <field name="interval_number">1</field>
+
+        <!-- Interval type -->
+        <field name="interval_type">days</field>
+
+    </record>
+</odoo>

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_hospital_appointment_tree" model="ir.ui.view">
+        <field name="name">hospital.appointment.tree</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <tree string="Appointments">
+                <field name="reference"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="date_appointment"/>
+                <field name="slot_time"/>
+                <field name="appointment_duration" string="Duration (min)"/>
+                <field name="consultation_fee" string="Fee (Rs.)"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'confirmed'"
+                       decoration-warning="state == 'draft'"
+                       decoration-danger="state == 'cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- APPOINTMENT FORM VIEW                     -->
+    <!-- ========================================= -->
+    <record id="view_hospital_appointment_form" model="ir.ui.view">
+        <field name="name">hospital.appointment.form</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Appointment">
+                <header>
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start_consultation"
+                            string="Start Consultation"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_done"
+                            string="Done"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'in_consultation'"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            invisible="state in ['done', 'cancelled']"/>
+                    <button name="%(action_appointment_slip_report)d"
+                            string="Print Slip"
+                            type="action"
+                            class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_consultation,done"/>
+                </header>
+
+                <sheet>
+                    <!-- ── Patient & Doctor Info ── -->
+                    <group>
+                        <group string="Patient Information">
+                            <field name="reference" readonly="1"/>
+                            <field name="patient_id"/>
+                            <field name="date_of_birth" readonly="1"/>
+                        </group>
+                        <group string="Doctor Information">
+                            <field name="doctor_id"/>
+                            <field name="department" readonly="1"/>
+                            <field name="date_appointment"/>
+                        </group>
+                    </group>
+
+                    <!-- ── Slot + Fee Row ── -->
+                    <group>
+                        <group string="📅 Appointment Slot">
+                            <label for="slot_time" string="Selected Time Slot"/>
+                            <div class="o_row">
+                                <field name="slot_time"
+                                       readonly="1"
+                                       placeholder="No slot selected"
+                                       class="fw-bold"/>
+                                <field name="appointment_duration"
+                                       readonly="1"
+                                       invisible="not slot_time"
+                                       string="mins"
+                                       class="text-muted"/>
+                                <button name="action_open_slots"
+                                        string="Select Slot"
+                                        type="object"
+                                        class="btn-link"
+                                        icon="fa-calendar"
+                                        invisible="state != 'draft' or not doctor_id or not date_appointment"/>
+                                <span invisible="state == 'draft'" class="text-muted">
+                                    <i class="fa fa-lock"
+                                       title="Cannot change slot after confirmation"/>
+                                    Locked
+                                </span>
+                            </div>
+                            <field name="slot_start_time" invisible="1"/>
+                            <field name="slot_end_time" invisible="1"/>
+                        </group>
+
+                        <!-- ── Fee Box ── -->
+                        <group string="💰 Fee Information" invisible="not slot_time">
+                            <div class="alert alert-success"
+                                 role="alert"
+                                 style="margin: 4px 0; padding: 12px 16px;">
+                                <div style="font-size: 13px; color: #155724;">
+                                    ✓ Fee Calculated
+                                </div>
+                                <div style="font-size: 22px; font-weight: bold; color: #155724; margin: 4px 0;">
+                                    Rs.
+                                    <field name="consultation_fee"
+                                           readonly="1"
+                                           nolabel="1"
+                                           style="display:inline; font-size:22px;
+                                                      font-weight:bold; color:#155724;"/>
+                                </div>
+                                <div style="font-size: 12px; color: #6c757d;">
+                                    (
+                                    <field name="appointment_duration"
+                                           readonly="1"
+                                           nolabel="1"
+                                           style="display:inline;"/>
+                                    minute consultation)
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!-- ── Notes ── -->
+                    <group>
+                        <field name="note" placeholder="Additional notes..."/>
+                    </group>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Yeh tree view ke baad add karo -->
+    <record id="view_hospital_appointment_calendar"
+            model="ir.ui.view">
+        <field name="name">hospital.appointment.calendar</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointments"
+                      date_start="date_appointment"
+                      date_stop="date_appointment"
+                      color="doctor_id"
+                      mode="month">
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="slot_time"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- APPOINTMENT SEARCH VIEW                   -->
+    <!-- ========================================= -->
+    <record id="view_hospital_appointment_search" model="ir.ui.view">
+        <field name="name">hospital.appointment.search</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <search string="Appointments">
+                <field name="reference"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="date_appointment"/>
+                <filter name="today" string="Today"
+                        domain="[('date_appointment', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="confirmed" string="Confirmed"
+                        domain="[('state', '=', 'confirmed')]"/>
+                <filter name="in_consultation" string="In Consultation"
+                        domain="[('state', '=', 'in_consultation')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_doctor" string="Doctor"
+                            context="{'group_by': 'doctor_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'date_appointment'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- APPOINTMENT GRAPH VIEW                    -->
+    <!-- ========================================= -->
+    <record id="view_hospital_appointment_graph"
+            model="ir.ui.view">
+        <field name="name">hospital.appointment.graph</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+
+            <graph string="Appointments Analysis"
+                   type="bar">
+
+                <!-- X axis — doctor ke basis pe group -->
+                <field name="doctor_id"/>
+
+                <!-- Y axis — count -->
+                <field name="consultation_fee"
+                       type="measure"/>
+
+            </graph>
+
+        </field>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- APPOINTMENT PIVOT VIEW                    -->
+    <!-- ========================================= -->
+    <record id="view_hospital_appointment_pivot"
+            model="ir.ui.view">
+        <field name="name">hospital.appointment.pivot</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+
+            <pivot string="Appointments Analysis">
+
+                <!-- Rows — doctor ke basis pe -->
+                <field name="doctor_id"
+                       type="row"/>
+
+                <!-- Columns — state ke basis pe -->
+                <field name="state"
+                       type="col"/>
+
+                <!-- Values — fee ka sum -->
+                <field name="consultation_fee"
+                       type="measure"/>
+
+            </pivot>
+
+        </field>
+    </record>
+
+
+    <record id="action_patient_appointment" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">tree,form,calendar,graph</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first appointment
+            </p>
+        </field>
+    </record>
+
+</odoo>

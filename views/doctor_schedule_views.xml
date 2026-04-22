@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- FORM VIEW                                 -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="view_doctor_schedule_form" model="ir.ui.view">
         <field name="name">hospital.doctor.schedule.form</field>
         <field name="model">hospital.doctor.schedule</field>
@@ -7,39 +11,144 @@
             <form string="Doctor Schedule">
                 <sheet>
                     <group>
-                        <field name="doctor_id"/>
-                        <field name="weekday"/>
-                    </group>
-                    <group>
-                        <field name="start_time"/>
-                        <field name="end_time"/>
-                        <field name="slot_duration"/>
+                        <group string="Doctor Information">
+                            <field name="doctor_id"/>
+                            <field name="weekday"/>
+                            <field name="is_available" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Time Information">
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="slot_duration"/>
+                            <field name="time_display" readonly="1"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Doctor Schedule Tree -->
+    <!-- ══════════════════════════════════════════ -->
+    <!-- TREE VIEW                                 -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="view_doctor_schedule_tree" model="ir.ui.view">
         <field name="name">hospital.doctor.schedule.tree</field>
         <field name="model">hospital.doctor.schedule</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree string="Doctor Schedules"
+                  decoration-muted="not is_available"
+                  decoration-success="is_available">
                 <field name="doctor_id"/>
                 <field name="weekday"/>
-                <field name="start_time"/>
-                <field name="end_time"/>
-                <field name="slot_duration"/>
+                <field name="time_display" string="Working Hours"/>
+                <field name="slot_duration" string="Slot (mins)"/>
+                <field name="is_available" widget="boolean_toggle"/>
             </tree>
         </field>
     </record>
 
-    <!-- Action -->
+    <!-- ══════════════════════════════════════════ -->
+    <!-- KANBAN VIEW — Professional Card View      -->
+    <!-- ══════════════════════════════════════════ -->
+    <record id="view_doctor_schedule_kanban" model="ir.ui.view">
+        <field name="name">hospital.doctor.schedule.kanban</field>
+        <field name="model">hospital.doctor.schedule</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="doctor_id"
+                    class="o_kanban_small_column">
+                <field name="doctor_id"/>
+                <field name="weekday"/>
+                <field name="time_display"/>
+                <field name="slot_duration"/>
+                <field name="is_available"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click
+                            #{record.is_available.raw_value ? 'schedule_available' : 'schedule_unavailable'}">
+
+                            <!-- Day Badge + Available Toggle -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span t-attf-class="schedule_day_badge
+                                    #{record.is_available.raw_value ? 'day_active' : 'day_inactive'}">
+                                    <i class="fa fa-calendar me-1"/>
+                                    <t t-esc="record.weekday.value"/>
+                                </span>
+                                <span t-attf-class="schedule_status_pill
+                                    #{record.is_available.raw_value ? 'status_on' : 'status_off'}">
+                                    <t t-if="record.is_available.raw_value">
+                                        <i class="fa fa-check-circle me-1"/>Available
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-times-circle me-1"/>Off
+                                    </t>
+                                </span>
+                            </div>
+
+                            <!-- Time Display -->
+                            <div class="schedule_time_block">
+                                <i class="fa fa-clock-o me-2" style="color:#6366f1;"/>
+                                <span class="schedule_time_text">
+                                    <t t-esc="record.time_display.value"/>
+                                </span>
+                            </div>
+
+                            <!-- Slot Duration -->
+                            <div class="schedule_slot_block mt-2">
+                                <i class="fa fa-hourglass-half me-2"
+                                   style="color:#f59e0b;"/>
+                                <span class="text-muted small">Slot Duration: </span>
+                                <span class="fw-semibold">
+                                    <t t-esc="record.slot_duration.value"/> min
+                                </span>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- SEARCH VIEW                               -->
+    <!-- ══════════════════════════════════════════ -->
+    <record id="view_doctor_schedule_search" model="ir.ui.view">
+        <field name="name">hospital.doctor.schedule.search</field>
+        <field name="model">hospital.doctor.schedule</field>
+        <field name="arch" type="xml">
+            <search string="Doctor Schedules">
+                <field name="doctor_id"/>
+                <field name="weekday"/>
+                <filter name="available" string="Available"
+                        domain="[('is_available','=',True)]"/>
+                <filter name="unavailable" string="Unavailable"
+                        domain="[('is_available','=',False)]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_doctor" string="Doctor"
+                            context="{'group_by': 'doctor_id'}"/>
+                    <filter name="group_day" string="Day"
+                            context="{'group_by': 'weekday'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- ACTION                                    -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="action_doctor_schedule" model="ir.actions.act_window">
         <field name="name">Doctor Schedules</field>
         <field name="res_model">hospital.doctor.schedule</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'group_by': 'doctor_id'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add doctor schedules
+            </p>
+        </field>
     </record>
 
 </odoo>

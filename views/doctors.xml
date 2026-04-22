@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- ══════════════════════════════════════════ -->
+    <!-- FORM VIEW                                 -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="view_hospital_doctor_form" model="ir.ui.view">
         <field name="name">hospital.doctor.form</field>
         <field name="model">hospital.doctor</field>
         <field name="arch" type="xml">
             <form string="Doctor">
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Doctor Name"/>
+                        </h1>
+                    </div>
+
                     <group>
                         <group string="Basic Information">
                             <field name="name"/>
@@ -20,19 +29,41 @@
                             These will be shown to patients when booking.
                         </div>
                         <group>
-                            <field name="fee_10min" string="10 Minutes — Quick Check-up (Rs.)"/>
-                            <field name="fee_20min" string="20 Minutes — Standard Consultation (Rs.)"/>
-                            <field name="fee_40min" string="40 Minutes — Detailed Examination (Rs.)"/>
+                            <field name="fee_10min"
+                                   string="10 Minutes — Quick Check-up (Rs.)"/>
+                            <field name="fee_20min"
+                                   string="20 Minutes — Standard Consultation (Rs.)"/>
+                            <field name="fee_40min"
+                                   string="40 Minutes — Detailed Examination (Rs.)"/>
                         </group>
                     </group>
+
+                    <!-- Schedule Tab -->
+                    <notebook>
+                        <page string="📅 Weekly Schedule">
+                            <field name="schedule_ids">
+                                <tree editable="bottom"
+                                      decoration-muted="not is_available"
+                                      decoration-success="is_available">
+                                    <field name="weekday"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="end_time" widget="float_time"/>
+                                    <field name="time_display" readonly="1"/>
+                                    <field name="slot_duration"/>
+                                    <field name="is_available" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- ========================================= -->
-    <!-- DOCTOR TREE VIEW                          -->
-    <!-- ========================================= -->
+    <!-- ══════════════════════════════════════════ -->
+    <!-- TREE VIEW                                 -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="view_hospital_doctor_tree" model="ir.ui.view">
         <field name="name">hospital.doctor.tree</field>
         <field name="model">hospital.doctor</field>
@@ -43,19 +74,103 @@
                 <field name="fee_10min" string="10 Min Fee (Rs.)"/>
                 <field name="fee_20min" string="20 Min Fee (Rs.)"/>
                 <field name="fee_40min" string="40 Min Fee (Rs.)"/>
+                <field name="available_days" string="Available Days"/>
             </tree>
         </field>
     </record>
 
+    <!-- ══════════════════════════════════════════ -->
+    <!-- KANBAN VIEW                               -->
+    <!-- ══════════════════════════════════════════ -->
+    <record id="view_hospital_doctor_kanban" model="ir.ui.view">
+        <field name="name">hospital.doctor.kanban</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="department"/>
+                <field name="fee_10min"/>
+                <field name="fee_20min"/>
+                <field name="fee_40min"/>
+                <field name="available_days"/>
+                <field name="schedule_ids"/>
 
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="o_doctor_kanban_card">
+
+                            <!-- ── Header ── -->
+                            <div class="o_doctor_card_header">
+                                <div class="o_doctor_avatar">
+                                    <i class="fa fa-user-md"/>
+                                </div>
+                                <div class="o_doctor_info">
+                                    <h5 class="o_doctor_name">
+                                        <t t-esc="record.name.value"/>
+                                    </h5>
+                                    <span class="o_doctor_dept">
+                                        <i class="fa fa-hospital-o me-1"/>
+                                        <t t-esc="record.department.value"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- ── Available Days ── -->
+                            <div class="o_doctor_days_section">
+                                <div class="o_doctor_section_title">
+                                    <i class="fa fa-calendar me-1"/>
+                                    Available Days
+                                </div>
+                                <div class="o_doctor_days_value">
+                                    <t t-esc="record.available_days.value"/>
+                                </div>
+                            </div>
+
+                            <!-- ── Fees ── -->
+                            <div class="o_doctor_fees_section">
+                                <div class="o_doctor_section_title">
+                                    <i class="fa fa-money me-1"/>
+                                    Consultation Fees
+                                </div>
+                                <div class="o_doctor_fee_row">
+                                    <span class="o_fee_label">10 Min</span>
+                                    <span class="o_fee_value">
+                                        Rs. <t t-esc="record.fee_10min.value"/>
+                                    </span>
+                                </div>
+                                <div class="o_doctor_fee_row">
+                                    <span class="o_fee_label">20 Min</span>
+                                    <span class="o_fee_value">
+                                        Rs. <t t-esc="record.fee_20min.value"/>
+                                    </span>
+                                </div>
+                                <div class="o_doctor_fee_row">
+                                    <span class="o_fee_label">40 Min</span>
+                                    <span class="o_fee_value">
+                                        Rs. <t t-esc="record.fee_40min.value"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════ -->
+    <!-- ACTION                                    -->
+    <!-- ══════════════════════════════════════════ -->
     <record id="action_hospital_doctor" model="ir.actions.act_window">
         <field name="name">Doctors</field>
         <field name="res_model">hospital.doctor</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first doctor
             </p>
         </field>
     </record>
+
 </odoo>

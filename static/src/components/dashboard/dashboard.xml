@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="om_hospital.HospitalDashboard">
+        <div class="o_hms_dashboard" style="background:#f8f9fb; padding:24px;">
+
+            <!-- ══ HEADER ══ -->
+            <div class="o_hms_header mb-4">
+                <h3 class="mb-0 fw-bold" style="color:#1e293b;">
+                    <i class="fa fa-hospital-o me-2" style="color:#6366f1;"/>
+                    Healthcare Analytics &amp; Insights
+                </h3>
+                <small class="text-muted">CityMed Hospital Management System</small>
+                <hr style="border-color:#e2e8f0;"/>
+            </div>
+
+            <!-- ══ TABS ══ -->
+            <div class="o_hms_tabs mb-4">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button t-attf-class="o_hms_tab_btn {{ state.activeTab === 'overview' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('overview')">
+                        <i class="fa fa-th-large me-1"/> Overview
+                    </button>
+                    <button t-attf-class="o_hms_tab_btn {{ state.activeTab === 'patients' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('patients')">
+                        <i class="fa fa-users me-1"/> Patients
+                    </button>
+                    <button t-attf-class="o_hms_tab_btn {{ state.activeTab === 'appointments' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('appointments')">
+                        <i class="fa fa-calendar me-1"/> Appointments
+                    </button>
+                    <button t-attf-class="o_hms_tab_btn {{ state.activeTab === 'doctors' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('doctors')">
+                        <i class="fa fa-user-md me-1"/> Doctors
+                    </button>
+                    <button t-attf-class="o_hms_tab_btn {{ state.activeTab === 'departments' ? 'active' : '' }}"
+                            t-on-click="() => this.switchTab('departments')">
+                        <i class="fa fa-building me-1"/> Departments
+                    </button>
+                </div>
+            </div>
+
+            <!-- ══ OVERVIEW TAB ══ -->
+            <t t-if="state.activeTab === 'overview'">
+
+                <div class="row g-3 mb-4">
+
+                    <!-- Total Patients — non clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card" style="border-top:3px solid #6366f1;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">TOTAL PATIENTS</div>
+                                    <div class="o_hms_card_value" style="color:#6366f1;">
+                                        <t t-esc="state.totalPatients"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#ede9fe;">
+                                    <i class="fa fa-users fa-lg" style="color:#6366f1;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Doctors — non clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card" style="border-top:3px solid #22c55e;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">TOTAL DOCTORS</div>
+                                    <div class="o_hms_card_value" style="color:#22c55e;">
+                                        <t t-esc="state.totalDoctors"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#dcfce7;">
+                                    <i class="fa fa-user-md fa-lg" style="color:#22c55e;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Appointments — clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card o_hms_card_clickable"
+                             style="border-top:3px solid #f59e0b;"
+                             t-on-click="() => this.switchTab('appointments', 'today')">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">TODAY'S APPOINTMENTS</div>
+                                    <div class="o_hms_card_value" style="color:#f59e0b;">
+                                        <t t-esc="state.todayAppointments"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#fef3c7;">
+                                    <i class="fa fa-calendar fa-lg" style="color:#f59e0b;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending — clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card o_hms_card_clickable"
+                             style="border-top:3px solid #ef4444;"
+                             t-on-click="() => this.switchTab('appointments', 'draft')">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">PENDING</div>
+                                    <div class="o_hms_card_value" style="color:#ef4444;">
+                                        <t t-esc="state.pendingAppointments"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#fee2e2;">
+                                    <i class="fa fa-clock-o fa-lg" style="color:#ef4444;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completed — clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card o_hms_card_clickable"
+                             style="border-top:3px solid #06b6d4;"
+                             t-on-click="() => this.switchTab('appointments', 'done')">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">COMPLETED</div>
+                                    <div class="o_hms_card_value" style="color:#06b6d4;">
+                                        <t t-esc="state.completedAppointments"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#cffafe;">
+                                    <i class="fa fa-check-circle fa-lg" style="color:#06b6d4;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cancelled — clickable -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="o_hms_card o_hms_card_clickable"
+                             style="border-top:3px solid #94a3b8;"
+                             t-on-click="() => this.switchTab('appointments', 'cancelled')">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="o_hms_card_label">CANCELLED</div>
+                                    <div class="o_hms_card_value" style="color:#94a3b8;">
+                                        <t t-esc="state.cancelledAppointments"/>
+                                    </div>
+                                </div>
+                                <div class="o_hms_card_icon" style="background:#f1f5f9;">
+                                    <i class="fa fa-times-circle fa-lg" style="color:#94a3b8;"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Charts -->
+                <div class="row g-3">
+                    <div class="col-lg-8">
+                        <div class="o_hms_card">
+                            <canvas t-ref="barChart" height="110"/>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="o_hms_card d-flex align-items-center justify-content-center">
+                            <canvas t-ref="doughnutChart" height="220"/>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+
+            <!-- ══ PATIENTS TAB ══ -->
+            <t t-if="state.activeTab === 'patients'">
+                <div class="o_hms_card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fa fa-users me-2" style="color:#6366f1;"/>
+                            All Patients
+                        </h5>
+                        <span class="badge rounded-pill"
+                              style="background:#ede9fe; color:#6366f1; font-size:13px; padding:6px 14px;">
+                            Total: <t t-esc="state.totalPatientCount"/>
+                        </span>
+                    </div>
+                    <table class="table table-hover o_hms_table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Patient Name</th>
+                                <th>Date of Birth</th>
+                                <th>Gender</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.patientList" t-as="pat" t-key="pat.id">
+                                <tr>
+                                    <td class="text-muted small"><t t-esc="pat_index + 1"/></td>
+                                    <td class="fw-semibold"><t t-esc="pat.name"/></td>
+                                    <td><t t-esc="pat.date_of_birth or '—'"/></td>
+                                    <td><t t-esc="pat.gender or '—'"/></td>
+                                    <td><t t-esc="pat.phone or '—'"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+            <!-- ══ APPOINTMENTS TAB ══ -->
+            <t t-if="state.activeTab === 'appointments'">
+                <div class="o_hms_card">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fa fa-calendar me-2" style="color:#6366f1;"/>
+                            Appointments
+                            <t t-if="state.appointmentFilter !== 'all'">
+                                <span class="ms-2 badge"
+                                      style="background:#6366f1; color:#fff; font-size:11px;">
+                                    <t t-esc="state.appointmentFilter === 'today' ? 'Today' :
+                                              state.appointmentFilter === 'draft' ? 'Pending' :
+                                              state.appointmentFilter === 'done' ? 'Completed' :
+                                              state.appointmentFilter === 'cancelled' ? 'Cancelled' : ''"/>
+                                </span>
+                            </t>
+                        </h5>
+                        <t t-if="state.appointmentFilter !== 'all'">
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    t-on-click="() => this.switchTab('appointments', 'all')">
+                                <i class="fa fa-times me-1"/> Clear Filter
+                            </button>
+                        </t>
+                    </div>
+                    <table class="table table-hover o_hms_table">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Fee</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.recentAppointments" t-as="appt" t-key="appt.id">
+                                <tr>
+                                    <td class="text-muted small fw-semibold">
+                                        <t t-esc="appt.reference"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="appt.patient_id and appt.patient_id[1] or '—'"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="appt.doctor_id and appt.doctor_id[1] or '—'"/>
+                                    </td>
+                                    <td class="text-muted small">
+                                        <t t-esc="appt.date_appointment or '—'"/>
+                                    </td>
+                                    <td class="fw-semibold" style="color:#22c55e;">
+                                        <t t-esc="formatFee(appt.consultation_fee)"/>
+                                    </td>
+                                    <td>
+                                        <span t-attf-class="o_hms_badge {{ getStatusBadge(appt.state) }}">
+                                            <t t-esc="getStatusLabel(appt.state)"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="state.recentAppointments.length === 0">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="fa fa-calendar-o fa-2x mb-2 d-block"/>
+                                        No appointments found
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+            <!-- ══ DOCTORS TAB ══ -->
+            <t t-if="state.activeTab === 'doctors'">
+                <div class="o_hms_card">
+                    <div class="d-flex align-items-center mb-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fa fa-user-md me-2" style="color:#22c55e;"/>
+                            Doctor Performance
+                        </h5>
+                    </div>
+                    <table class="table table-hover o_hms_table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Doctor</th>
+                                <th>Department</th>
+                                <th>Total Appts</th>
+                                <th>Completed</th>
+                                <th>Workload</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.doctorWorkload" t-as="doc" t-key="doc.name">
+                                <tr>
+                                    <td class="text-muted small"><t t-esc="doc_index + 1"/></td>
+                                    <td class="fw-semibold"><t t-esc="doc.name"/></td>
+                                    <td><t t-esc="doc.department"/></td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#ede9fe; color:#6366f1;">
+                                            <t t-esc="doc.total"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#dcfce7; color:#16a34a;">
+                                            <t t-esc="doc.done"/>
+                                        </span>
+                                    </td>
+                                    <td style="width:160px;">
+                                        <div class="progress" style="height:7px; border-radius:4px;">
+                                            <div class="progress-bar"
+                                                 t-attf-style="width:{{ doc.percent }}%; background:#6366f1;"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+            <!-- ══ DEPARTMENTS TAB ══ -->
+            <t t-if="state.activeTab === 'departments'">
+                <div class="o_hms_card">
+                    <div class="d-flex align-items-center mb-3">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fa fa-building me-2" style="color:#f59e0b;"/>
+                            Department Statistics
+                        </h5>
+                    </div>
+                    <table class="table table-hover o_hms_table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Department</th>
+                                <th>Total Appointments</th>
+                                <th>Completed</th>
+                                <th>Cancelled</th>
+                                <th>Pending</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.departmentStats" t-as="dept" t-key="dept.name">
+                                <tr>
+                                    <td class="text-muted small"><t t-esc="dept_index + 1"/></td>
+                                    <td class="fw-semibold"><t t-esc="dept.name"/></td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#ede9fe; color:#6366f1;">
+                                            <t t-esc="dept.total"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#dcfce7; color:#16a34a;">
+                                            <t t-esc="dept.done"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#fee2e2; color:#dc2626;">
+                                            <t t-esc="dept.cancelled"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill"
+                                              style="background:#fef3c7; color:#d97706;">
+                                            <t t-esc="dept.pending"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+
+        </div>
+    </t>
+
+</templates>

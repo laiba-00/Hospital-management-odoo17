@@ -58,21 +58,23 @@ class HospitalAppointment(models.Model):
         compute="_compute_slot_time",
         store=True
     )
-
-    # consultation_fee = fields.Float(
-    #     string="Consultation Fee (Rs.)",
-    #     digits=(10, 2),
-    #     readonly=True,
-    #     tracking=True,
-    #     help="Auto-calculated from doctor's fee schedule based on selected slot duration."
-    # )
     consultation_fee = fields.Float(
         string="Consultation Fee (Rs.)",
         digits=(10, 2),
         tracking=True,
         help="Auto-calculated from doctor's fee schedule based on selected slot duration."
     )
+    duration_selector = fields.Many2one(
+        'hospital.doctor',
+        string="Slot Selector",
+        store=False,
+        compute="_compute_duration_selector",
+    )
 
+    @api.depends('doctor_id')
+    def _compute_duration_selector(self):
+        for rec in self:
+            rec.duration_selector = rec.doctor_id
 
     # ─── Computed Fields ──────────────────────────────────────────────────────
 
@@ -102,7 +104,6 @@ class HospitalAppointment(models.Model):
 
     @api.onchange('doctor_id', 'date_appointment')
     def _onchange_clear_slot(self):
-        """Clear slot and fee when doctor or date changes"""
         if self.slot_start_time or self.slot_end_time:
             self.slot_start_time = False
             self.slot_end_time = False
@@ -110,44 +111,12 @@ class HospitalAppointment(models.Model):
 
     # ─── Actions ──────────────────────────────────────────────────────────────
 
-    def action_open_slots(self):
-        self.ensure_one()
-        if not self.doctor_id or not self.date_appointment:
-            raise ValidationError("Please select both Doctor and Date first!")
-
-        weekday = self.date_appointment.strftime('%A').lower()
-        schedules = self.env['hospital.doctor.schedule'].search([
-            ('doctor_id', '=', self.doctor_id.id),
-            ('weekday', '=', weekday)
-        ])
-        if not schedules:
-            raise ValidationError(
-                f'Doctor {self.doctor_id.name} has no schedule for {weekday.title()}.'
-            )
-
-        wizard = self.env['appointment.slot.wizard'].create({
-            'appointment_id': self.id,
-            'doctor_id': self.doctor_id.id,
-            'date': self.date_appointment,
-        })
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Select Appointment Duration',
-            'res_model': 'appointment.slot.wizard',
-            'res_id': wizard.id,
-            'view_mode': 'form',
-            'target': 'new',
-        }
-
     def action_confirm(self):
         for rec in self:
             if not rec.slot_start_time:
                 raise ValidationError("Please select a time slot before confirming!")
             rec.state = "confirmed"
-
-            template = self.env.ref(
-                'om_hospital.email_template_appointment_confirm'
-            )
+            template = self.env.ref('om_hospital.email_template_appointment_confirm')
             if template and rec.patient_id.email:
                 template.send_mail(rec.id, force_send=True)
 
@@ -172,7 +141,6 @@ class HospitalAppointment(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
-        """Prevent slot changes after confirmation"""
         if any(key in vals for key in ['slot_start_time', 'slot_end_time']):
             for rec in self:
                 if rec.state != 'draft':
@@ -205,34 +173,23 @@ class HospitalAppointment(models.Model):
                     )
 
     def action_auto_cancel_appointments(self):
-
         today = fields.Date.today()
-
         past_appointments = self.search([
             ('state', '=', 'draft'),
             ('date_appointment', '<', today)
         ])
-
         if past_appointments:
             past_appointments.write({'state': 'cancelled'})
 
-    # @api.constrains('date_appointment')
-    # def _check_appointment_date(self):
-    #     for rec in self:
-    #         if rec.date_appointment < fields.Date.today():
-    #             raise ValidationError(
-    #                 "Appointment date cannot be in the past! "
-    #                 "Please select today or a future date."
-    #             )
-    # Tumhare model mein yeh constraint hai
     @api.constrains('date_appointment')
     def _check_appointment_date(self):
-        for rec in self:  # ← yeh line missing thi
+        for rec in self:
             if rec.date_appointment < fields.Date.today():
                 raise ValidationError(
                     "Appointment date cannot be in the past! "
                     "Please select today or a future date."
                 )
+
     @api.onchange('date_appointment')
     def _onchange_date_appointment(self):
         if self.date_appointment and \
@@ -243,3 +200,78 @@ class HospitalAppointment(models.Model):
                     'message': 'Please select today or future date!'
                 }
             }
+
+    # ─── OWL Slot Widget Methods ───────────────────────────────────────────────
+
+    @api.model
+    def get_doctor_fees(self, doctor_id):
+        doctor = self.env['hospital.doctor'].browse(doctor_id)
+        return {
+            10: doctor.fee_10min,
+            20: doctor.fee_20min,
+            40: doctor.fee_40min,
+        }
+
+    @api.model
+    def get_available_slots(self, appointment_id, doctor_id, date, duration_minutes):
+        from odoo import fields as odoo_fields
+        date_obj = odoo_fields.Date.from_string(date)
+        weekday = date_obj.strftime('%A').lower()
+
+        schedules = self.env['hospital.doctor.schedule'].search([
+            ('doctor_id', '=', doctor_id),
+            ('weekday', '=', weekday)
+        ])
+
+        if not schedules:
+            return []
+
+        duration_hours = duration_minutes / 60.0
+        result = []
+
+        for schedule in schedules:
+            current = schedule.start_time
+            while current < schedule.end_time:
+                slot_end = current + duration_hours
+                if slot_end > schedule.end_time:
+                    break
+
+                overlapping = self.env['hospital.appointment'].search([
+                    ('doctor_id', '=', doctor_id),
+                    ('date_appointment', '=', date),
+                    ('slot_start_time', '<', slot_end),
+                    ('slot_end_time', '>', current),
+                    ('state', '!=', 'cancelled'),
+                ])
+
+                if appointment_id:
+                    overlapping = overlapping.filtered(
+                        lambda r: r.id != appointment_id
+                    )
+
+                start_h = int(current)
+                start_m = int((current - start_h) * 60)
+                end_h = int(slot_end)
+                end_m = int((slot_end - end_h) * 60)
+
+                result.append({
+                    'start_time': current,
+                    'end_time': slot_end,
+                    'is_booked': bool(overlapping),
+                    'time_display': f"{start_h:02d}:{start_m:02d} - {end_h:02d}:{end_m:02d}",
+                })
+
+                current += duration_hours
+
+        return result
+
+    def save_slot_from_widget(self, start_time, end_time, fee):
+        self.ensure_one()
+        if self.state != 'draft':
+            raise ValidationError("Cannot change slot after confirmation!")
+        self.write({
+            'slot_start_time': start_time,
+            'slot_end_time': end_time,
+            'consultation_fee': fee,
+        })
+        return True

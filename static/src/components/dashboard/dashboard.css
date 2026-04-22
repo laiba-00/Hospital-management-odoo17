@@ -1,0 +1,319 @@
+/* ── Tab Buttons ── */
+.o_hms_tab_btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.o_hms_tab_btn:hover {
+    background: #ede9fe;
+    color: #6366f1;
+}
+.o_hms_tab_btn.active {
+    background: #6366f1;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+
+/* ── Cards ── */
+.o_hms_card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    margin-bottom: 0;
+}
+.o_hms_card_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+}
+.o_hms_card_value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+}
+.o_hms_card_icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Tables ── */
+.o_hms_table thead tr {
+    background: #f8f9fb;
+}
+.o_hms_table thead th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 14px;
+}
+.o_hms_table tbody td {
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+.o_hms_table tbody tr:hover {
+    background: #fafbff;
+}
+
+/* ── Status Badges ── */
+.o_hms_badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+.badge-draft       { background:#fef3c7; color:#d97706; }
+.badge-confirmed   { background:#ede9fe; color:#6366f1; }
+.badge-consultation{ background:#cffafe; color:#0891b2; }
+.badge-done        { background:#dcfce7; color:#16a34a; }
+.badge-cancelled   { background:#fee2e2; color:#dc2626; }
+
+/* ══════════════════════════════════════════
+   DOCTOR SCHEDULE KANBAN
+   ══════════════════════════════════════════ */
+
+/* ── Card Base ── */
+.schedule_available {
+    border-left: 4px solid #22c55e !important;
+    border-radius: 10px;
+    padding: 14px;
+    background: #fff;
+    transition: all 0.2s;
+}
+.schedule_unavailable {
+    border-left: 4px solid #94a3b8 !important;
+    border-radius: 10px;
+    padding: 14px;
+    background: #f8f9fb;
+    opacity: 0.8;
+    transition: all 0.2s;
+}
+.schedule_available:hover {
+    box-shadow: 0 4px 16px rgba(99,102,241,0.12);
+    transform: translateY(-2px);
+}
+
+/* ── Day Badge ── */
+.schedule_day_badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+.day_active {
+    background: #ede9fe;
+    color: #6366f1;
+}
+.day_inactive {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+/* ── Status Pill ── */
+.schedule_status_pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+.status_on {
+    background: #dcfce7;
+    color: #16a34a;
+}
+.status_off {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ── Time Block ── */
+.schedule_time_block {
+    background: #f8f9fb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+.schedule_time_text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* ── Slot Block ── */
+.schedule_slot_block {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+}
+
+/* ── Kanban Column Header ── */
+.o_kanban_group .o_kanban_header {
+    background: #f8f9fb;
+    border-radius: 10px 10px 0 0;
+    padding: 10px 14px;
+}
+.o_kanban_group .o_kanban_header .o_column_title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #1e293b;
+}
+
+/* ══════════════════════════════════════════
+   DOCTOR KANBAN CARD
+   ══════════════════════════════════════════ */
+
+.o_doctor_kanban_card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.2s;
+    border: 1px solid #e2e8f0;
+}
+
+.o_doctor_kanban_card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.12);
+    border-color: #6366f1;
+}
+
+/* ── Header ── */
+.o_doctor_card_header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+}
+
+.o_doctor_avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.o_doctor_avatar i {
+    font-size: 24px;
+    color: #fff;
+}
+
+.o_doctor_info {
+    flex: 1;
+    min-width: 0;
+}
+
+.o_doctor_name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 4px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_doctor_dept {
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+}
+
+/* ── Section Title ── */
+.o_doctor_section_title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+}
+
+/* ── Days Section ── */
+.o_doctor_days_section {
+    padding: 14px 18px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.o_doctor_days_value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6366f1;
+    background: #ede9fe;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* ── Fees Section ── */
+.o_doctor_fees_section {
+    padding: 14px 18px;
+}
+
+.o_doctor_fee_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.o_doctor_fee_row:last-child {
+    border-bottom: none;
+}
+
+.o_fee_label {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.o_fee_value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #22c55e;
+}
+
+.o_hms_dashboard {
+    overflow-y: visible !important;
+    height: auto !important;
+}
+/* Dashboard scroll fix */
+.o_action.o_act_client {
+    overflow-y: auto !important;
+    height: 100% !important;
+}
+
+.o_action_manager {
+    overflow-y: auto !important;
+}
+
+.o_hms_dashboard {
+    min-height: auto !important;
+    overflow: visible !important;
+}

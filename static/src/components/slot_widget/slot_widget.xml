@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="om_hospital.SlotSelectorWidget">
+        <div style="width:100%; padding:4px 0;">
+
+            <!-- Locked -->
+            <t t-if="isLocked">
+                <div style="color:#64748b; font-size:13px;">
+                    <i class="fa fa-lock me-2"/>
+                    <strong><t t-esc="currentSlotTime"/></strong>
+                    — Locked after confirmation
+                </div>
+            </t>
+
+            <!-- Active -->
+            <t t-else="">
+
+                <!-- Current slot display -->
+                <t t-if="currentSlotTime">
+                    <div style="margin-bottom:12px; padding:8px 14px;
+                                background:#dcfce7; border-radius:8px;
+                                color:#16a34a; font-size:13px;
+                                font-weight:600; display:inline-block;">
+                        <i class="fa fa-check-circle me-1"/>
+                        Selected: <t t-esc="currentSlotTime"/> — Change below
+                    </div>
+                </t>
+
+                <!-- Duration + Fee row -->
+                <div style="display:flex; flex-direction:row;
+                             align-items:center; gap:10px;
+                             flex-wrap:wrap; margin-bottom:16px;">
+
+                    <span style="font-size:13px; font-weight:600; color:#374151;">
+                        Duration:
+                    </span>
+
+                    <t t-foreach="durations" t-as="dur" t-key="dur.value">
+                        <div t-on-click="() => this.onDurationChange(dur.value)"
+                             t-attf-style="
+                                display:inline-flex; align-items:center;
+                                gap:6px; padding:7px 16px;
+                                border-radius:20px; cursor:pointer;
+                                font-size:13px; font-weight:500;
+                                border:2px solid {{ isDurationSelected(dur.value) ? '#6366f1' : '#e2e8f0' }};
+                                background:{{ isDurationSelected(dur.value) ? '#ede9fe' : '#fff' }};
+                                color:{{ isDurationSelected(dur.value) ? '#6366f1' : '#374151' }};
+                                transition:all 0.15s;">
+                            <span t-attf-style="
+                                width:14px; height:14px; border-radius:50%; flex-shrink:0;
+                                border:2px solid {{ isDurationSelected(dur.value) ? '#6366f1' : '#94a3b8' }};
+                                background:{{ isDurationSelected(dur.value) ? '#6366f1' : '#fff' }};
+                                display:inline-block;"/>
+                            <t t-esc="dur.label"/>
+                        </div>
+                    </t>
+
+                    <!-- Fee pill — direct state variables use karo -->
+                    <t t-if="state.selectedDuration">
+                        <span style="font-size:13px; font-weight:700;
+                                     color:#16a34a; background:#dcfce7;
+                                     padding:6px 16px; border-radius:20px;
+                                     border:1px solid #bbf7d0;">
+                            <t t-if="state.selectedDuration === 10">
+                                Fee: <t t-esc="formatFee(state.fee10)"/>
+                            </t>
+                            <t t-elif="state.selectedDuration === 20">
+                                Fee: <t t-esc="formatFee(state.fee20)"/>
+                            </t>
+                            <t t-elif="state.selectedDuration === 40">
+                                Fee: <t t-esc="formatFee(state.fee40)"/>
+                            </t>
+                        </span>
+                    </t>
+
+                </div>
+
+                <!-- Loading -->
+                <t t-if="state.loading">
+                    <div style="color:#64748b; font-size:13px; margin-bottom:8px;">
+                        <i class="fa fa-spinner fa-spin me-2"/>
+                        Loading slots...
+                    </div>
+                </t>
+
+                <!-- Slots -->
+                <t t-if="!state.loading and state.slots.length > 0">
+                    <div style="font-size:11px; font-weight:600; color:#94a3b8;
+                                letter-spacing:0.5px; margin-bottom:8px;">
+                        AVAILABLE SLOTS
+                    </div>
+                    <div style="display:flex; flex-direction:row;
+                                flex-wrap:wrap; gap:8px;">
+                        <t t-foreach="state.slots" t-as="slot" t-key="slot.start_time">
+                            <button
+                                t-on-click="() => this.onSlotSelect(slot)"
+                                t-att-disabled="slot.is_booked"
+                                t-attf-style="
+                                    padding:6px 12px; border-radius:6px;
+                                    font-size:12px; font-weight:500;
+                                    white-space:nowrap;
+                                    cursor:{{ slot.is_booked ? 'not-allowed' : 'pointer' }};
+                                    border:2px solid {{
+                                        slot.is_booked ? '#e2e8f0' :
+                                        isSlotSelected(slot.start_time) ? '#16a34a' : '#6366f1'
+                                    }};
+                                    background:{{
+                                        slot.is_booked ? '#f1f5f9' :
+                                        isSlotSelected(slot.start_time) ? '#dcfce7' : '#fff'
+                                    }};
+                                    color:{{
+                                        slot.is_booked ? '#94a3b8' :
+                                        isSlotSelected(slot.start_time) ? '#16a34a' : '#4f46e5'
+                                    }};
+                                    text-decoration:{{ slot.is_booked ? 'line-through' : 'none' }};">
+                                <t t-if="isSlotSelected(slot.start_time)">
+                                    <i class="fa fa-check me-1"/>
+                                </t>
+                                <t t-esc="slot.time_display"/>
+                            </button>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- No slots -->
+                <t t-if="!state.loading and state.selectedDuration and state.slots.length === 0">
+                    <div style="background:#fef3c7; color:#d97706;
+                                padding:8px 14px; border-radius:8px;
+                                font-size:13px; margin-top:4px;">
+                        <i class="fa fa-exclamation-triangle me-1"/>
+                        No slots available for this duration.
+                    </div>
+                </t>
+
+            </t>
+        </div>
+    </t>
+
+</templates>

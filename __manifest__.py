@@ -17,13 +17,26 @@
         'report/appointment_report_action.xml',
         "views/patient_view.xml",
         "views/patient_readonly_views.xml",
-        "views/appointment_slot_views.xml",
-        "views/appointment_slot_wizard_view.xml",
         "views/appointment_view.xml",
         "views/doctors.xml",
         "views/doctor_schedule_views.xml",
         "views/patient_tag_view.xml",
         "views/portal_template_view.xml",
+        "views/dashboard_view.xml",
         "views/menu.xml",
-    ]
+    ],
+    "assets": {
+        "web.assets_backend": [
+            "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+            "om_hospital/static/src/components/dashboard/dashboard.css",
+            "om_hospital/static/src/components/dashboard/dashboard.js",
+            "om_hospital/static/src/components/dashboard/dashboard.xml",
+            "om_hospital/static/src/components/slot_widget/slot_widget.css",
+            "om_hospital/static/src/components/slot_widget/slot_widget.js",
+            "om_hospital/static/src/components/slot_widget/slot_widget.xml",
+        ],
+        "web.assets_frontend": [
+            "om_hospital/static/src/css/hospital_portal.css",
+        ],
+    },
 }

@@ -1,2 +1,34 @@
-# Hospital-management-odoo17
-A complete Hospital Management System built in Odoo 17 — featuring patient registration, doctor schedules, appointment booking, portal login, fee management &amp; PDF slip printing.
+# 🏥 Hospital Management System — Odoo 17
+
+A complete Hospital Management System built on Odoo 17 with custom OWL components.
+
+## ✨ Features
+
+### 📊 OWL Analytics Dashboard
+- Real-time stats with clickable cards
+- Chart.js bar & doughnut charts
+- Tabbed views: Overview, Patients, Appointments, Doctors, Departments
+
+### ⏰ Custom OWL Slot Selector Widget
+- Inline duration selection with live fee display
+- Dynamic slots — no wizard needed
+
+### 👨‍⚕️ Doctor Management
+- Kanban view with fees & available days
+- Weekly schedule management
+
+### 🌐 Patient Website Portal
+- Online appointment booking
+- Doctor schedules page
+- My appointments tracking
+
+## 🛠️ Tech Stack
+`Python` `XML` `JavaScript` `OWL Framework` `Chart.js` `QWeb` `PostgreSQL`
+
+## 📦 Modules Used
+`mail` `portal` `website`
+
+## 🚀 How to Install
+1. Clone this repo into your Odoo `custom_addons` folder
+2. Update apps list
+3. Install `Hospital Management System`

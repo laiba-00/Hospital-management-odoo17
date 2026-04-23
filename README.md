@@ -1,5 +1,8 @@
 # 🏥 Hospital Management System — Odoo 17
 
+<img width="665" height="433" alt="image" src="https://github.com/user-attachments/assets/7a440b86-e6a9-446f-b6ab-40f6bd3006eb" />
+
+
 A complete Hospital Management System built on Odoo 17 with custom OWL components.
 
 ## ✨ Features
@@ -30,9 +33,5 @@ A complete Hospital Management System built on Odoo 17 with custom OWL component
 
 ## 🚀 How to Install
 1. Clone this repo into your Odoo `custom_addons` folder
-
-<img width="665" height="433" alt="image" src="https://github.com/user-attachments/assets/7a440b86-e6a9-446f-b6ab-40f6bd3006eb" />
-
-
-3. Update apps list
-4. Install `Hospital Management System`
+2. Update apps list
+3. Install `Hospital Management System`
